@@ -1,0 +1,73 @@
+---
+title: "Community Service Tracker"
+description: "Online platform designed to simplify logging, tracking, and managing community service hours for students."
+repo: "https://github.com/MrTrotid/Community-Service-Tracker"
+liveDemo: "https://community-service-tracker.vercel.app"
+techStack: ["React", "TypeScript", "Tailwind CSS", "Firebase", "Express.js"]
+category: ["Web App", "Full Stack"]
+date: 2024-11-20
+image: "/images/projects/community_service_tracker_1.webp"
+screenshots:
+  - "/images/projects/community_service_tracker_2.webp"
+  - "/images/projects/community_service_tracker_3.webp"
+challenges:
+  - "Designing an intuitive dashboard for both students and administrators"
+  - "Handling real-time verification and syncing of hours via Firebase"
+  - "Implementing a robust role-based access control system"
+lessons:
+  - "Firebase simplifies real-time state management significantly"
+  - "Using TypeScript across the full stack prevents numerous runtime errors"
+  - "A clean UI helps ensure high adoption rates among non-technical users"
+featured: true
+---
+
+## Project Overview
+
+The **Community Service Tracker** is a comprehensive online platform designed to simplify logging, tracking, and managing community service hours for students. 
+
+With an intuitive interface, both students and administrators can efficiently monitor service hours while ensuring compliance with established guidelines.
+
+## Problem Statement
+
+Manually tracking community service hours often involves physical forms, spreadsheets, and cumbersome approval processes. This leads to lost records, slow verification times, and a lack of transparency for students who need to know exactly how many hours they have left to fulfill their obligations.
+
+## Solution
+
+This platform fully digitizes the community service lifecycle. Students start with a baseline (e.g., 50 mandatory service hours). They can log their completed hours, which are then queued for administrator review. 
+
+Administrators have the power to verify and approve these hours, manage punishment hours for disciplinary actions, and curate a database of approved service opportunities where students can volunteer.
+
+## Technical Implementation
+
+### Frontend & Backend Integration
+
+The stack uses React with TypeScript on the frontend and Express.js on the backend, tightly integrated with Firebase for authentication and database management.
+
+```typescript
+// Example: Validating a student's logged hours submission
+export const submitHours = async (studentId: string, hours: number, description: string) => {
+  if (hours <= 0) throw new Error("Hours must be greater than zero");
+  
+  await db.collection("serviceLogs").add({
+    studentId,
+    hours,
+    description,
+    status: "pending_review",
+    timestamp: new Date()
+  });
+};
+```
+
+### Key Features
+
+- **Initial Hours Allocation**: Every student begins with 50 mandatory service hours.
+- **Real-Time Hour Tracking**: Students instantly view updated totals.
+- **Punishment Hour Management**: Assign additional hours for disciplinary purposes.
+- **Service Opportunities Database**: Displays a list of approved locations for volunteering.
+- **Verification & Approval**: Submitted hours are securely reviewed and validated.
+
+## Areas for Improvement
+
+- **Mobile Application**: Porting the tracker to a React Native app for on-the-go logging.
+- **Automated Notifications**: Email or SMS alerts when hours are approved or rejected.
+- **Reporting Analytics**: Generating detailed PDF reports for schools or organizations.

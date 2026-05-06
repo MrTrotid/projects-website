@@ -1,0 +1,42 @@
+---
+title: "Sherlock Scramble"
+description: "A highly successful word search game featured in the St. Xavier's A-Level magazine, Panorama. Designed collaboratively, with core development by Sushant Pangeni."
+repo: "https://github.com/SXC-ALCC/Sherlock-Scrambles"
+techStack: ["Next.js", "Auth.js", "Tailwind CSS", "Firestore"]
+category: ["Game", "Web App", "College Project"]
+date: 2024-10-05
+image: "/images/projects/Sherlocks_scramble.webp"
+screenshots:
+  - "/images/projects/Sherlocks_scramble1.webp"
+  - "/images/projects/Sherlocks_scramble2.webp"
+challenges:
+  - "Designing engaging UI elements for a diverse college student audience"
+  - "Collaborating effectively within a club setting to meet magazine deadlines"
+lessons:
+  - "A well-executed, simple game concept can achieve massive engagement across different fields of study"
+  - "Clear role division (design vs. development) is crucial for delivering projects on time"
+featured: false
+---
+
+## Project Overview
+
+**Sherlock Scramble** (originally codenamed Weave Game) is an interactive word search game developed by the A Levels Computer Club (ALCC) of St. Xavier's College, Loyola Block. It was proudly featured in the St. Xavier's A-Level magazine, Panorama, and became a massive hit upon release, with students from various fields playing and competing.
+
+While I contributed to designing a few UI elements and conceptual features, the heavy lifting and core software development were done by my friend, Sushant Pangeni, who was the IT Head of the club at the time.
+
+Interestingly, my most significant technical contribution to this game wasn't building it—it was hacking it! I built a companion Python script to solve the game automatically, which you can check out here: [Sherlock Scramble Solver](/projects/sherlock-scramble-solver).
+
+## Reception and Success
+
+When Sherlock Scramble was released alongside the Panorama magazine, it saw incredible engagement. The premise was simple but highly addictive. Players were tasked with finding specific words hidden within a dynamic letter grid, and the addition of leaderboards kept students coming back. It was highly successful and bridged the gap between computer science students and the rest of the college.
+
+## Technical Background
+
+The game itself is a full-stack web application. It features a robust authentication system using Auth.js so players can save their scores. The game state is managed in React, and player scores are synced to a Firebase Firestore database to generate a real-time global leaderboard.
+
+- **Next.js**: For server-side rendering and API routes.
+- **Auth.js**: To handle user login.
+- **Tailwind CSS**: For styling the game board.
+- **Firestore**: A NoSQL database storing user profiles and high scores.
+
+If you are interested in how the grids were solved programmatically, don't forget to look at my [Sherlock Scramble Solver](/projects/sherlock-scramble-solver) script.

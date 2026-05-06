@@ -1,0 +1,101 @@
+---
+title: "AQ Sentinel"
+description: "Real-time air quality monitoring platform with IoT integration. Winner of the A-Level STEAM competition."
+repo: "https://github.com/rahatpaudel/aqsentinel"
+liveDemo: "https://aqsentinel.com"
+techStack: ["Next.js", "React", "Node.js", "ESP32", "IoT", "WebSocket"]
+category: ["IoT", "Web App", "Environmental", "Competition"]
+date: 2025-08-15
+image: "/images/projects/aq-sentinel.png"
+screenshots:
+  - "/images/projects/aq-sentinel-1.png"
+  - "/images/projects/aq-sentinel-2.png"
+challenges:
+  - "Calibrating the MQ-135 gas sensor accurately in changing environmental conditions"
+  - "Visualizing high-frequency real-time sensor data without crashing the browser UI"
+  - "Pitching a hardware-software integrated solution effectively during a competition"
+lessons:
+  - "Integrating IoT hardware with modern web frameworks opens incredible possibilities for everyday utility"
+  - "A focused use-case, like monitoring a single room's safety, strongly resonates with competition judges and users"
+featured: true
+---
+
+## Project Overview
+
+AQ Sentinel is a remote air quality monitoring platform that combines custom IoT hardware with a modern web application. We originally built this as a team project for a STEAM competition within the A-Level department. 
+
+The concept was to create a remote air quality monitor that you could place in your room. It would constantly scan the environment and notify you about the surroundings—for example, if there was a dangerous gas leakage or if there was a high concentration of other gases in the room.
+
+Working collaboratively allowed us to split the hardware and software challenges effectively. We were incredibly proud that **this project won the STEAM competition**. Winning at our college allowed our team to advance and present our project at the **National SET Exhibition**.
+
+## Problem Statement
+
+Historically, real-time air quality and gas monitoring has been largely inaccessible to the general public due to the high cost of commercial hardware solutions. Most available systems were either too expensive for individual use or too complex to set up. There was a clear, pressing need for an affordable, open-source alternative that could empower individuals to monitor their personal spaces for gas leaks and poor air quality.
+
+## Solution
+
+To address this gap, our team designed and built a complete, end-to-end IoT solution that bridges hardware and software seamlessly. The architecture consists of several key components working in tandem. 
+
+On the hardware layer, an ESP32 microcontroller interfaces directly with an MQ-135 gas sensor and a DHT22 temperature/humidity sensor. To ensure the data flows instantaneously, the system leverages a WebSocket connection for real-time data transmission. On the backend, Next.js API routes handle the data ingestion and persistent storage securely. Finally, the frontend provides a React-based dashboard featuring real-time charts, historical data tracking, and a sleek dark theme matching our terminal aesthetic.
+
+## Technical Implementation
+
+### IoT Firmware
+
+The ESP32 runs custom C++ firmware that dictates the hardware's behavior. The firmware is responsible for reading the sensor data every 2 seconds, calibrating the raw analog readings based on ambient environmental factors, and establishing a persistent WebSocket connection to our cloud server.
+
+```cpp
+void loop() {
+  int sensorValue = analogRead(MQ135_PIN);
+  float temperature = dht.readTemperature();
+  float humidity = dht.readHumidity();
+
+  // Calibrate readings based on environmental factors
+  float calibratedValue = calibrateMQ135(sensorValue, temperature, humidity);
+
+  // Send via WebSocket
+  webSocket.sendTXT(String(calibratedValue));
+  delay(2000);
+}
+```
+
+### Backend Architecture
+
+The backend utilizes Next.js API routes, which act as the central ingestion point for the continuous stream of sensor data. These routes validate incoming payloads, authenticate the hardware node, and store the metrics efficiently in our database.
+
+```typescript
+import { defineApiRoute } from 'next';
+
+export default defineApiRoute(async (req, res) => {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const data = req.body;
+  
+  // Validate and securely store incoming sensor telemetry
+  await storeSensorData(data);
+
+  return res.status(200).json({ success: true });
+});
+```
+
+### Frontend Features
+
+The frontend is built with React and Tailwind CSS, focusing strictly on performance and user experience. Chart.js is integrated to handle the real-time visualization, allowing users to watch air quality metrics fluctuate second by second. The UI also features a historical data view with a custom date range selection tool, all wrapped in a responsive design that looks exceptional on both desktop monitors and mobile screens.
+
+## Challenges Faced
+
+One of the biggest hurdles during development was handling the sheer volume of the real-time data stream. Initially, pushing new data points to the browser every second overwhelmed the React rendering cycle, causing severe UI lag. We resolved this by implementing a custom throttling mechanism that batches incoming WebSocket messages and only triggers a UI refresh at a smooth 60 frames per second.
+
+Another significant challenge involved the physical MQ-135 sensor calibration to accurately detect gas leakages. Out of the box, the sensor's analog readings were highly susceptible to temperature variations. We had to create a dynamic calibration routine that runs on startup, using the DHT22's temperature data to mathematically adjust and normalize the MQ-135's readings against known reference values.
+
+## Lessons Learned
+
+Building AQ Sentinel taught us invaluable lessons about the intersection of hardware and web development, as well as the dynamics of working in a team environment. Most importantly, we learned that IoT projects require incredibly robust error handling. In the real world, devices will inevitably lose connection and sensors will occasionally spike with anomalous readings. The software must be designed to handle these edge cases gracefully without crashing.
+
+Additionally, participating in the STEAM competition taught us that framing a complex technical project around a relatable, everyday problem—like monitoring your own bedroom for gas leaks—makes the technology much more compelling to judges and users alike.
+
+## Future Improvements
+
+Potential future enhancements for the platform could include the integration of machine learning models to provide predictive air quality forecasting based on historical trends. Additionally, implementing a mobile push notification system would be highly beneficial to alert users immediately on their phones when air quality drops to dangerous levels or a gas leak is detected in their room.

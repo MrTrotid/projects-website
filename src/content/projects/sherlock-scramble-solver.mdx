@@ -1,0 +1,55 @@
+---
+title: "Sherlock Scramble Solver"
+description: "A Python script designed to automatically solve the Sherlock Scramble word grids by finding hidden words instantly."
+repo: "https://github.com/MrTrotid/Sherlock-Scramble-Solver"
+techStack: ["Python", "Algorithms", "Automation"]
+category: ["Tool", "Script", "Automation"]
+date: 2024-10-10
+image: "/images/projects/sherlock-scramber-solver_1.webp"
+screenshots:
+  - "/images/projects/sherlock-scramber-solver_2.webp"
+  - "/images/projects/sherlock-scramber-solver_3.webp"
+challenges:
+  - "Designing an efficient search algorithm to parse 2D grids in all 8 directions"
+  - "Formatting grid inputs so the script can easily ingest the raw game data"
+lessons:
+  - "Writing algorithmic solvers is an excellent way to understand the underlying mechanics of a game"
+  - "Simple Python scripts can effectively 'cheat' logic-based web games if server-side validation is lacking"
+featured: false
+---
+
+## Project Overview
+
+The **Sherlock Scramble Solver** is a straightforward but powerful Python script I built to "cheat" the [Sherlock Scramble](/projects/sherlock-scramble) game. 
+
+While the original game was a massive hit developed by the A Levels Computer Club (with core dev by my friend Sushant Pangeni), I found it incredibly fun to approach the game from a hacker's perspective. Instead of playing the game normally, I wrote software that could beat the system instantly.
+
+## How It Works
+
+The solver requires two main inputs:
+1. **The Grid**: The raw letter grid extracted from the game.
+2. **The Words**: The list of hidden words you need to find.
+
+### The Algorithm
+
+The script takes the 2D array of characters and performs a multi-directional search (horizontal, vertical, and diagonal) to locate the target words. 
+
+To use the tool, you simply need to get the grid into the right format. By inspecting the game's source or DOM, you can extract the letters and format them into a Python list of strings (or a 2D array). You also provide the list of words to find. 
+
+```python
+# Example Grid Input Format
+grid = [
+    "S H E R L O C K",
+    "A C P B X Y Z A",
+    "M R O A S D F G",
+    "P B N M Q W E R"
+]
+
+words_to_find = ["SHERLOCK", "SCRAMBLE"]
+```
+
+Once the script runs, it scans every coordinate on the grid. If the first letter of a target word matches, it recursively checks all 8 adjacent directions to see if the rest of the word follows. 
+
+## The Outcome
+
+Running the script instantly spits out the exact starting coordinates and directions for every word on the board, allowing you to solve the puzzles in record time. It was a fun, quick dive into algorithmic grid searching and a cheeky way to top the leaderboards of our own college game!

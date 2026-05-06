@@ -1,0 +1,26 @@
+---
+interface Props {
+  screenshots: string[];
+  title: string;
+}
+
+const { screenshots, title } = Astro.props;
+---
+
+{screenshots && screenshots.length > 0 && (
+  <div class="my-8">
+    <h3 class="text-lg font-bold mb-4 terminal-prompt">ls screenshots/</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {screenshots.map((screenshot, index) => (
+        <div class="border border-terminal-green/20 rounded-lg overflow-hidden bg-terminal-bgLight hover:border-terminal-green/40 transition-colors group cursor-pointer">
+          <img
+            src={screenshot}
+            alt={`${title} screenshot ${index + 1}`}
+            class="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-300"
+            loading="lazy"
+          />
+        </div>
+      ))}
+    </div>
+  </div>
+)}

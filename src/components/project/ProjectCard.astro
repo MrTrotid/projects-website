@@ -1,0 +1,61 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const { title, description, techStack, image, date } = project.data;
+const { slug } = project;
+---
+
+<a href={`/${slug}`} class="group block" transition:name={`project-${slug}`}>
+  <article class="border border-terminal-green/20 rounded-lg overflow-hidden bg-terminal-bgLight hover:border-terminal-green/50 transition-all duration-300 hover:border-glow">
+    <div class="aspect-video overflow-hidden bg-terminal-bg">
+      <img
+        src={image}
+        alt={title}
+        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+        onerror="this.src='/images/placeholder.png'"
+      />
+    </div>
+
+    <div class="p-6">
+      <div class="flex items-center gap-2 mb-2 text-sm text-terminal-text/60">
+        <span class="text-terminal-green">#</span>
+        <time datetime={date.toISOString()}>
+          {date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
+        </time>
+      </div>
+
+      <h3 class="text-xl font-bold mb-2 group-hover:text-terminal-green transition-colors">
+        {title}
+      </h3>
+
+      <p class="text-terminal-text/80 text-sm mb-4 line-clamp-2">
+        {description}
+      </p>
+
+      <div class="flex flex-wrap gap-2">
+        {techStack.slice(0, 4).map((tech) => (
+          <span class="text-xs px-2 py-1 bg-terminal-green/10 text-terminal-green rounded border border-terminal-green/20">
+            {tech}
+          </span>
+        ))}
+        {techStack.length > 4 && (
+          <span class="text-xs px-2 py-1 bg-terminal-green/10 text-terminal-green/70 rounded border border-terminal-green/20">
+            +{techStack.length - 4}
+          </span>
+        )}
+      </div>
+    </div>
+
+    <div class="px-6 pb-4 flex items-center text-sm text-terminal-green/70 group-hover:text-terminal-green transition-colors">
+      <span class="terminal-prompt">view details</span>
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+    </div>
+  </article>
+</a>

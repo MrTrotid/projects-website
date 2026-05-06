@@ -1,0 +1,69 @@
+---
+title: "FlatUI"
+description: "A vim-like Terminal User Interface (TUI) for browsing and managing Flatpak applications on Linux."
+repo: "https://github.com/MrTrotid/flatui"
+techStack: ["Python", "Textual", "Flatpak", "TUI"]
+category: ["TUI", "Linux", "Utility"]
+date: 2025-04-01
+image: "/images/placeholder.png"
+challenges:
+  - "Improving search performance for large Flatpak repositories"
+  - "Creating intuitive vim-like keybindings for terminal navigation"
+  - "Handling asynchronous Flatpak API calls without blocking the UI"
+lessons:
+  - "The Textual framework is excellent for building rich terminal interfaces"
+  - "Debouncing search inputs significantly improves UX for API-heavy operations"
+  - "Providing clear loading states is crucial for TUI applications"
+featured: false
+---
+
+## Project Overview
+
+**FlatUI** is a vim-inspired Terminal User Interface (TUI) designed to simplify the process of browsing, searching, and installing Flatpak applications on Linux systems. Built with Python and the Textual framework, it provides a keyboard-centric experience reminiscent of classic terminal applications.
+
+## Problem Statement
+
+Managing Flatpak applications via the command line can be cumbersome, especially when dealing with large repositories or needing to search for specific packages. While powerful, the flatpak command lacks an intuitive visual interface for casual users who prefer keyboard-driven navigation over memorizing complex command syntax.
+
+## Solution
+
+I built FlatUI as a dedicated TUI application that wraps Flatpak functionality in a clean, navigable interface. The application uses the Textual framework to create a responsive terminal interface with vim-like keybindings (hjkl for navigation, : for commands, etc.).
+
+Key features include:
+- Browsing all available Flatpak applications from configured remotes
+- Fuzzy search functionality to quickly find packages by name or description
+- One-click installation/removal of selected applications
+- Detailed view showing application metadata, permissions, and dependencies
+- Status indicators for installed vs. available applications
+
+## Technical Implementation
+
+### Core Architecture
+
+FlatUI follows a classic Model-View-Controller (MVC) pattern adapted for terminal applications:
+- **Model**: Handles all Flatpak API interactions through subprocess calls
+- **View**: Built with Textual widgets (DataTable, Input, Modal, etc.) for the terminal interface  
+- **Controller**: Manages user input, updates the model, and refreshes the view
+
+### Key Technical Details
+
+- **Textual Framework**: Leverages React-like asynchronous rendering for smooth terminal updates
+- **Asynchronous Operations**: Uses Python's asyncio to prevent UI blocking during Flatpak API calls
+- **Search Optimization**: Implements debouncing and caching to improve search responsiveness
+- **Keybindings**: Vim-inspired navigation (hjkl) with modal command entry (:) for power users
+
+## Challenges Faced
+
+One of the biggest hurdles was addressing the inherent slowness when searching through thousands of Flatpak applications. Each search query requires contacting remote repositories, which can introduce noticeable latency. I mitigated this by implementing client-side caching of repository data and debouncing search inputs to prevent excessive API calls.
+
+Another challenge was creating an intuitive keyboard navigation system that feels natural to both vim users and newcomers to terminal interfaces. The solution involved careful mapping of common actions to easy-to-reach keys while maintaining discoverability through a persistent help panel.
+
+## Lessons Learned
+
+Building FlatUI reinforced the value of specialized TUI frameworks like Textual for creating professional terminal applications. I learned that debouncing and caching are absolutely essential when building interfaces that interact with slow external APIs, as even small delays can ruin the user experience.
+
+Most importantly, this project reminded me that sometimes the best solutions are purpose-built tools that solve a single problem exceptionally well—in this case, providing a pleasant keyboard-driven way to manage Flatpak software without needing to remember complex command-line flags.
+
+## Future Improvements
+
+Planned enhancements include integrating Flathub's metadata for richer application descriptions, adding screenshot previews in the detailed view, and implementing background updates to keep the application cache fresh without impacting responsiveness.

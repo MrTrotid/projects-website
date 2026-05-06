@@ -1,0 +1,21 @@
+---
+interface Props {
+  command: string;
+  output?: string;
+  class?: string;
+}
+
+const { command, output, class: className = '' } = Astro.props;
+---
+
+<div class={`font-mono ${className}`}>
+  <div class="flex items-start gap-2">
+    <span class="text-terminal-prompt font-bold">$</span>
+    <span class="text-terminal-text">{command}</span>
+  </div>
+  {output && (
+    <div class="ml-4 mt-1 text-terminal-text/80 text-sm">
+      {output}
+    </div>
+  )}
+</div>

@@ -1,0 +1,76 @@
+---
+title: "MeroAushadhi"
+description: "Health-focused platform for medicine information and availability tracking built for Cambridge Code League"
+repo: "https://github.com/mrtrotid/meroaushadhi"
+liveDemo: "https://meroaushadhi.com"
+techStack: ["React", "Node.js", "MongoDB", "Express", "Tailwind CSS", "AI Tools"]
+category: ["Web App", "Health", "Hackathon"]
+date: 2025-06-10
+image: "/images/projects/meroaushadhi.webp"
+screenshots:
+  - "/images/projects/meroaushadhi-1.png"
+  - "/images/projects/meroaushadhi-2.png"
+challenges:
+  - "Brainstorming a unique, culturally relevant idea for the hackathon"
+  - "Building a bilingual search system under strict time constraints"
+  - "Creating an award-winning UI/UX quickly"
+lessons:
+  - "A dedicated portal is incredibly valuable for a specific demographic even if general tools like Google Lens exist"
+  - "AI is a powerful accelerator for hackathon development"
+  - "Focusing on UI/UX pays off, especially for non-technical target audiences"
+featured: true
+---
+
+## Project Overview
+
+MeroAushadhi (which translates to "My Medicine" in Nepali) is a health-focused web platform designed to empower users by helping them find detailed medicine information and proper usage instructions. 
+
+This is not a full-on production app yet; it was built as a hackathon project for the **Cambridge Code League**. We developed this as a team named **"SXC 2"**, representing our college.
+
+The idea took some time to conceptualize as we wanted to be creative and build something genuinely useful for our local community. While general tools like Google Lens can perform some tasks (like OCR on medicine labels), having a dedicated, localized portal for Nepalis who aren't aware of those tools is incredibly useful.
+
+## Achievements
+
+Our team's hard work during the hackathon paid off with fantastic results:
+- **3rd Place Overall** in the Cambridge Code League
+- **Best UI/UX Award** for our intuitive, accessible design
+
+## Technical Implementation
+
+To move fast during the hackathon, we leveraged AI tools to accelerate our coding process alongside our chosen tech stack.
+
+### Backend Architecture
+
+The backbone of MeroAushadhi is a RESTful API constructed with Node.js, Express, and MongoDB.
+
+```javascript
+// Express route for bilingual medicine search
+app.get('/api/medicines/search', async (req, res) => {
+  const { query } = req.query;
+
+  // Search across English name, Nepali name, and generic compounds
+  const medicines = await Medicine.find({
+    $or: [
+      { name: new RegExp(query, 'i') },
+      { nepaliName: new RegExp(query, 'i') },
+      { genericName: new RegExp(query, 'i') }
+    ]
+  }).limit(20);
+
+  res.json(medicines);
+});
+```
+
+### Frontend Features
+
+The frontend is a React Single Page Application (SPA) styled entirely with Tailwind CSS. It features a bilingual search interface that gracefully handles both Latin and Devanagari scripts. Winning the Best UI/UX award was a testament to our focus on accessibility, ensuring the app remains highly intuitive for elderly or non-tech-savvy users in urgent situations.
+
+## Areas for Improvement
+
+Since this is currently a hackathon prototype, there are clear paths for evolution rather than immediate real-world impact metrics. 
+
+The main improvements planned for this project include:
+- **Mobile App Development:** Rebuilding the platform as a native mobile app to make it accessible to a wider user base.
+- **Offline Mode:** Ensuring the app functions without an internet connection, which is critical for rural areas in Nepal.
+- **Enhanced OCR:** Improving the camera's OCR recognition capabilities to better read faded or complex medicine labels.
+- **Search Optimization:** Optimizing the bilingual search algorithms to be significantly faster.

@@ -1,0 +1,109 @@
+---
+import Layout from '../layouts/Layout.astro';
+import TerminalPrompt from '../components/ui/TerminalPrompt.astro';
+import ProjectCard from '../components/project/ProjectCard.astro';
+import { getCollection } from 'astro:content';
+
+const projects = await getCollection('projects');
+
+// Fetch GitHub updated_at dates at build time
+const projectsWithUpdates = await Promise.all(projects.map(async (project) => {
+  let lastUpdated = project.data.date.valueOf();
+  
+  if (project.data.repo && project.data.repo.includes('github.com')) {
+    try {
+      const urlParts = project.data.repo.split('github.com/')[1].split('/');
+      const owner = urlParts[0];
+      const repo = urlParts[1];
+      
+      const response = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
+        headers: { 'User-Agent': 'Astro-Project-Showcase' }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.updated_at) {
+          lastUpdated = new Date(data.updated_at).valueOf();
+        }
+      }
+    } catch (error) {
+      console.error(`Failed to fetch github data for ${project.data.title}`, error);
+    }
+  }
+  
+  return { ...project, lastUpdated };
+}));
+
+const sortedProjects = projectsWithUpdates.sort((a, b) => b.lastUpdated - a.lastUpdated);
+
+// Define the threshold for "recent" projects
+const recentCount = 6;
+---
+
+<Layout title="Home" description="Projects showcase with terminal aesthetic">
+  <section class="py-16 md:py-24 animate-fade-in-up">
+    <div class="max-w-3xl mb-16">
+      <div class="mb-8">
+        <p class="text-terminal-green/60 text-sm mb-2">$ whoami</p>
+        <h1 class="text-4xl md:text-6xl font-bold mb-4 text-glow">
+          Projects<span class="text-terminal-green">_</span>
+          <span class="text-lg md:text-xl font-normal text-terminal-text/50 ml-2">[{projects.length} total]</span>
+        </h1>
+        <p class="text-xl md:text-2xl text-terminal-text/80">
+          A collection of experiments, builds, and things I've made.
+        </p>
+      </div>
+
+      <div class="border border-terminal-green/20 rounded-lg p-6 bg-terminal-bgLight">
+        <TerminalPrompt
+          command="cat about.txt"
+          output="Cybersecurity enthusiast and developer building modern web applications and exploring practical security concepts."
+        />
+      </div>
+    </div>
+
+    <div class="flex items-center justify-between mb-8 border-b border-terminal-green/20 pb-4">
+      <h2 class="text-2xl font-bold">ls -la projects/</h2>
+      
+      <!-- Recent Toggle -->
+      <label class="relative inline-flex items-center cursor-pointer group">
+        <input type="checkbox" id="recent-toggle" class="sr-only peer">
+        <div class="w-11 h-6 bg-terminal-bgLight border border-terminal-green/30 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-terminal-bg after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-terminal-green after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-terminal-green/20 group-hover:border-terminal-green/50"></div>
+        <span class="ml-3 text-sm font-medium text-terminal-text/80 group-hover:text-terminal-green transition-colors">Recently Updated</span>
+      </label>
+    </div>
+
+    <!-- Projects Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="projects-grid">
+      {sortedProjects.map((project, index) => (
+        <div
+          class="project-item transition-all duration-300"
+          data-recent={index < recentCount ? "true" : "false"}
+        >
+          <ProjectCard project={project} />
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <script>
+    const recentToggle = document.getElementById('recent-toggle') as HTMLInputElement;
+    const projectItems = document.querySelectorAll('.project-item');
+
+    if (recentToggle) {
+      recentToggle.addEventListener('change', (e) => {
+        const showRecentOnly = (e.target as HTMLInputElement).checked;
+
+        projectItems.forEach((item) => {
+          const isRecent = item.getAttribute('data-recent') === 'true';
+          
+          if (showRecentOnly && !isRecent) {
+            item.classList.add('hidden');
+          } else {
+            item.classList.remove('hidden');
+          }
+        });
+      });
+    }
+  </script>
+</Layout>

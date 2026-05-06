@@ -1,0 +1,61 @@
+---
+const portfolioUrl = "https://bamanguragain.com.np";
+---
+
+<nav class="border-b border-terminal-green/20 bg-terminal-bg/95 backdrop-blur-sm sticky top-0 z-50 shadow-[0_4px_30px_rgba(16,185,129,0.05)]">
+  <div class="container mx-auto px-4">
+    <div class="flex items-center justify-between h-16">
+      <a href="/" class="flex items-center gap-2 hover:text-terminal-green transition-colors group" aria-label="Go to Home">
+        <span class="text-terminal-green font-bold group-hover:animate-pulse">~/</span>
+        <span class="text-terminal-text group-hover:text-terminal-green transition-colors">projects</span>
+      </a>
+
+      <div class="hidden md:flex items-center gap-6">
+        <a
+          href={portfolioUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center gap-2 px-4 py-2 bg-terminal-green/10 border border-terminal-green/30 text-terminal-green rounded hover:bg-terminal-green/20 transition-all hover:scale-105 hover:shadow-[0_0_15px_rgba(16,185,129,0.2)] focus:ring-2 focus:ring-terminal-green/50 outline-none"
+          aria-label="Open main portfolio"
+        >
+          <span class="terminal-prompt">main portfolio</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+          </svg>
+        </a>
+      </div>
+
+      <button id="menu-toggle" class="md:hidden text-terminal-green hover:text-terminal-greenDark transition-colors p-2 focus:outline-none focus:ring-2 focus:ring-terminal-green/50 rounded" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-menu">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="md:hidden hidden border-t border-terminal-green/20 py-4">
+      <div class="flex flex-col gap-4">
+        <a
+          href={portfolioUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="terminal-prompt hover:text-terminal-green transition-colors flex items-center gap-2"
+        >
+          main portfolio
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<script>
+  const menuToggle = document.getElementById('menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  menuToggle?.addEventListener('click', () => {
+    mobileMenu?.classList.toggle('hidden');
+  });
+</script>

@@ -1,0 +1,66 @@
+---
+title: "Certifications Portal"
+description: "A centralized hub to showcase and verify professional certifications and badges earned."
+repo: "https://github.com/MrTrotid/Certificates-Portal"
+liveDemo: "https://certifications.bamanguragain.com.np/"
+techStack: ["Next.js", "React", "Tailwind CSS", "Framer Motion", "MDX"]
+category: ["Web App", "Portfolio", "Certifications"]
+date: 2025-02-14
+image: "/images/projects/certificates-site.png"
+challenges:
+  - "Designing a clean, professional layout for displaying various certification badges"
+  - "Implementing a verification system to ensure authenticity of displayed certs"
+  - "Ensuring responsive design across devices for easy access"
+lessons:
+  - "Next.js provides excellent performance for static sites with dynamic route generation"
+  - "Tailwind CSS utility-first approach speeds up UI development significantly"
+  - "Clear information architecture is key for users to quickly find relevant credentials"
+featured: true
+---
+
+## Project Overview
+
+The **Certifications Portal** is a dedicated sub-site I created to catalog my various achievements, including professional course certifications, hackathon podiums, volunteering work, and extracurricular activities.
+
+## Problem Statement
+
+My main portfolio was becoming too cluttered with every single certificate and minor achievement I had earned. I needed a specialized, highly organized space to list my credentials without overwhelming my primary developer portfolio.
+
+## Solution
+
+I built a statically generated website using Astro 4.x. It pulls data from a local JSON structure and maps it to a beautiful, filterable React UI. 
+
+Users can easily sort through different categories like "Networking", "Security", "Volunteering", and "ECA" to find specific milestones.
+
+## Technical Implementation
+
+### Astro & React Integration
+
+Astro handles the static site generation and routing, while React components are hydrated on the client specifically for the interactive filtering logic.
+
+```javascript
+// Example: Data structure for a certificate entry
+const certificates = [
+  {
+    id: "1",
+    title: "Introduction to Cybersecurity",
+    issuer: "Cisco",
+    date: "Aug 2025",
+    category: "Security",
+    image: "/images/certs/cisco-cyber.jpg",
+    verifyUrl: "https://www.credly.com/..."
+  }
+];
+```
+
+### Key Features
+
+- **Categorization**: Achievements are split into Course Certifications, Competitions, Awards, Volunteering, and ECA.
+- **Image Lightbox**: Click-to-enlarge functionality for viewing certificate details.
+- **Verification Links**: Direct links to credential issuers like Credly and Hackerrank for authenticity.
+- **Performance**: Zero-JS by default approach using Astro, loading React only for the interactive filters.
+
+## Areas for Improvement
+
+- **Automated Syncing**: Hooking into the Credly API to automatically fetch and display new badges.
+- **Image Optimization**: Migrating to next-gen formats (WebP/AVIF) dynamically during the Astro build process.

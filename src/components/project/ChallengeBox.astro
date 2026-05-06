@@ -1,0 +1,28 @@
+---
+interface Props {
+  title: string;
+  items: string[];
+  type: 'challenges' | 'lessons';
+}
+
+const { title, items, type } = Astro.props;
+
+const iconColor = type === 'challenges' ? 'text-yellow-400' : 'text-blue-400';
+const borderColor = type === 'challenges' ? 'border-yellow-400/20' : 'border-blue-400/20';
+const bgColor = type === 'challenges' ? 'bg-yellow-400/5' : 'bg-blue-400/5';
+---
+
+<div class={`p-6 rounded-lg border ${borderColor} ${bgColor} mb-6`}>
+  <h3 class={`text-lg font-bold mb-4 flex items-center gap-2 ${iconColor}`}>
+    {type === 'challenges' ? '⚠' : '💡'}
+    {title}
+  </h3>
+  <ul class="space-y-3">
+    {items.map((item) => (
+      <li class="flex items-start gap-3">
+        <span class={`mt-1 ${iconColor}`}>•</span>
+        <span class="text-terminal-text/90">{item}</span>
+      </li>
+    ))}
+  </ul>
+</div>

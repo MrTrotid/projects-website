@@ -1,0 +1,16 @@
+---
+interface Props {
+  techStack: string[];
+  class?: string;
+}
+
+const { techStack, class: className = '' } = Astro.props;
+---
+
+<div class={`flex flex-wrap gap-2 ${className}`}>
+  {techStack.map((tech) => (
+    <span class="text-xs px-3 py-1 bg-terminal-green/10 text-terminal-green rounded border border-terminal-green/20 hover:bg-terminal-green/20 transition-colors">
+      {tech}
+    </span>
+  ))}
+</div>
