@@ -1,0 +1,270 @@
+---
+title: "Trotid Shell"
+description: "A customized Hyprland desktop shell assembled in QML/Quickshell — 15+ widgets, 9 singleton services, live Material You theming, and 50+ IPC keybinds with a searchable cheatsheet. Components adapted from existing shells and ported to work together."
+repo: "https://github.com/MrTrotid/MrTrotid_Shell"
+techStack: ["QML", "Shell", "Hyprland", "Quickshell", "Wayland"]
+category: ["Linux", "Ricing", "Desktop Environment"]
+date: 2026-06-04
+image: "/images/projects/trotid-shell-hero.png"
+screenshots:
+  - "/images/projects/trotid-shell-bar.png"
+  - "/images/projects/trotid-shell-wallpaper-picker.png"
+  - "/images/projects/trotid-shell-notifications.png"
+  - "/images/projects/trotid-shell-cheatsheet.png"
+  - "/images/projects/trotid-shell-clipboard.png"
+  - "/images/projects/trotid-shell-emoji-gif.png"
+challenges:
+  - "Learning QML/Quickshell from scratch while assembling and adapting components from existing shells"
+  - "Designing a singleton service architecture where 9 services communicate via property bindings without tight coupling"
+  - "Implementing a coverflow wallpaper picker with thumbnail pre-generation and live color extraction for filtering"
+  - "Making FileView-based color polling detect atomic file rewrites (matugen uses temp+rename), requiring a switch to Process+cat"
+  - "Getting NotificationAction QObject invoke() to work across DBus after stripping to plain JS objects for ListModel storage"
+  - "Achieving live Material You theming across 15+ components (bar, popups, OSD, notifications, wlogout) with a single color source"
+lessons:
+  - "Quickshell's FileView.reload() doesn't detect atomic file rewrites — use Process + cat for reliable file polling"
+  - "Quickshell.env() requires 'import Quickshell' separately from 'import Quickshell.Io' — missing import causes silent ReferenceError"
+  - "QML property names starting with 'on' + uppercase letter conflict with signal handlers — rename to avoid hours of debugging"
+  - "PanelWindow doesn't support anchors.horizontalCenter — use anchors.left with calculated margins.left instead"
+  - "Singleton services with pragma Singleton need both qmldir registration AND correct import paths — missing either breaks silently"
+  - "ListModel can't hold QObject references — keep original refs in a parallel JS array for invoke() calls"
+featured: true
+---
+
+# Trotid Shell
+
+A customized desktop shell for Hyprland + Quickshell, featuring Material You theming, singleton service architecture, and 15+ widgets assembled and adapted from existing projects — all in QML.
+
+<details>
+<summary><strong>Screenshots</strong></summary>
+
+| Bar Overview | Wallpaper Picker | Notification Toasts |
+|---|---|---|
+| ![Bar](/images/projects/trotid-shell-bar.png) | ![Picker](/images/projects/trotid-shell-wallpaper-picker.png) | ![Toasts](/images/projects/trotid-shell-notifications.png) |
+
+| Cheatsheet | Clipboard Manager | Emoji & GIF Picker |
+|---|---|---|
+| ![Cheatsheet](/images/projects/trotid-shell-cheatsheet.png) | ![Clipboard](/images/projects/trotid-shell-clipboard.png) | ![Emoji/GIF](/images/projects/trotid-shell-emoji-gif.png) |
+
+</details>
+
+## What It Does
+
+Trotid Shell replaces the traditional bar + widget + notification stack with a unified QML-based desktop shell. Every component — from the status bar to the notification toasts to the wallpaper picker — runs as a Wayland layer shell surface managed by Quickshell.
+
+The shell reads your wallpaper, generates a Material You color palette via matugen, and applies it live across all 15+ components. Change your wallpaper, and the entire desktop re-themes instantly.
+
+## Architecture
+
+### Singleton Service Pattern
+
+The core innovation is a **singleton service architecture** where 9 independent services communicate through QML property bindings:
+
+```
+┌─────────────────────────────────────────────────┐
+│                  shell.qml                       │
+│         (Single entry point, all popups)         │
+├─────────────────────────────────────────────────┤
+│                                                   │
+│  ┌──────────────┐  ┌──────────────┐              │
+│  │ AudioService │  │ColorService  │              │
+│  │   (wpctl)    │  │ (Process+cat)│              │
+│  └──────┬───────┘  └──────┬───────┘              │
+│         │                  │                      │
+│  ┌──────▼───────┐  ┌──────▼───────┐              │
+│  │VolumeService │  │  BarContent  │              │
+│  │ (driven by   │  │ (binds all)  │              │
+│  │  AudioSvc)   │  │              │              │
+│  └──────────────┘  └──────────────┘              │
+│                                                   │
+│  NetworkService  BatteryService  SystemService    │
+│  BrightnessService  NotificationService           │
+│  ShellState (activePopup mutual exclusion)        │
+└─────────────────────────────────────────────────┘
+```
+
+Each service is a `pragma Singleton` with a `qmldir` entry. Components bind to service properties directly — no event buses, no callbacks, just declarative QML bindings.
+
+### Material You Pipeline
+
+```
+Wallpaper → wallset-backend → matugen → colors.json → ColorService → All Components
+                ↓
+           wallust → Kitty, Hyprland, Waybar, Rofi, wlogout
+```
+
+`wallset-backend` orchestrates the full pipeline: `swaybg` (wallpaper), `wallust` (terminal colors), `matugen` (Material You), `pywal_cava`, lock screen background, and swaync restart. ColorService reads the generated `colors.json` via `Process` + `cat` every 2 seconds, updating all bound components live.
+
+### Global IPC Keybinds
+
+All 50+ keybinds live in a single `keybinds.conf` file. Shell toggles use Quickshell's global IPC:
+
+```conf
+bind = SUPER, A, global, quickshell:notificationPanelToggle
+bind = SUPER, O, global, quickshell:barToggle
+bind = SUPER, M, global, quickshell:mediaControlsToggle
+bind = SUPER, J, global, quickshell:quickActionsToggle
+bind = SUPER, /, global, quickshell:cheatsheetToggle
+bind = Ctrl+Super, T, global, quickshell:wallpaperToggle
+bind = SUPER, period, global, quickshell:emojiToggle
+bind = SUPER, comma, global, quickshell:gifToggle
+```
+
+The cheatsheet reads this data structure to generate an interactive, searchable keybind reference with executable actions.
+
+## Key Components
+
+### Coverflow Wallpaper Picker
+- Matrix4x4 skew transforms for 3D coverflow effect
+- Pre-generated thumbnails in `~/.cache/quickshell/wallpaper_picker/thumbs/`
+- Color extraction via ImageMagick for category filtering (Red/Orange/Yellow/Green/Blue/Purple/Pink/Monochrome)
+- Calls `$HOME/.local/bin/wallset-backend` for unified theming on apply
+
+### Notification System
+- Full DBus notification server (`NotificationServer`) in NotificationService singleton
+- Toast notifications with prominent separated action buttons (keeps original `NotificationAction` refs for `invoke()`)
+- Nandoroid-style grouped notification panel with expand/collapse
+- Persistence to `~/.cache/quickshell/notifications.json`, restored on reload
+- Urgency-based styling (critical = red border, 15s timeout)
+- Pause dismiss on hover for action interaction
+
+### OSD (On-Screen Display)
+- Watches VolumeService and BrightnessService properties
+- Shows icon, progress bar, and percentage
+- Updates in-place if already visible (no restart animation)
+- Supports volume, brightness, and mic (text label)
+- Auto-hides after 2 seconds
+
+### Native Widgets (no external dependencies)
+- **Clipboard Manager**: cliphist integration, batch read, image preview, search/filter
+- **Emoji Picker**: 5 categories, text search via emojiNames mapping, click to copy
+- **GIF Picker**: Tenor API search, AnimatedImage preview (plays on hover), dynamic grid sizing
+- **Quick Actions HUD**: 7 action buttons, keyboard navigation, slide-up animation
+- **Power Menu**: wlogout with HyprNova-style icons, Material You CSS via matugen template
+
+## Technical Deep Dive
+
+### The ColorService Problem
+
+The original implementation used Quickshell's `FileView` to watch `colors.json`. The problem: matugen writes atomically (temp file + rename), and `FileView.reload()` doesn't detect this. The fix:
+
+```qml
+// Before: FileView doesn't detect atomic rewrites
+FileView {
+    path: Quickshell.env("HOME") + "/.config/quickshell/mrtrotid-shell/colors.json"
+    onTextChanged: root._parseColors(colorFile.text())
+}
+
+// After: Process + cat forces fresh read every 2s
+Process {
+    id: colorReader
+    command: ["cat", root._colorFilePath]
+    onRunningChanged: {
+        if (!running && root._fileBuffer.length > 0) {
+            root._parseColors(root._fileBuffer)
+            root._fileBuffer = ""
+        }
+    }
+    stdout: SplitParser {
+        onRead: data => root._fileBuffer += data + "\n"
+    }
+}
+```
+
+### NotificationAction Reference Preservation
+
+ListModel can't hold QObject references. The solution: store a `_ref` field alongside the serialized data:
+
+```qml
+// Keep original NotificationAction ref for invoke()
+"actions": notification.actions.map(a => ({
+    identifier: a.identifier,
+    text: a.text,
+    _ref: a  // preserves invoke() capability
+}))
+```
+
+### PanelWindow Height Calculation
+
+Action buttons add height to toasts. The PanelWindow must dynamically calculate its surface size:
+
+```qml
+implicitHeight: {
+    var count = Math.min(NotificationService.toastList.count, 3)
+    var h = 0
+    for (var i = 0; i < count; i++) {
+        var entry = NotificationService.toastList.get(i)
+        h += (entry && entry.actions && entry.actions.length > 0) ? 92 : 64
+        if (i > 0) h += 10
+    }
+    return h
+}
+```
+
+## Project Structure
+
+```
+Trotid_Shell/
+├── hypr/
+│   ├── hyprland.conf          # Layout, animations, exec-once
+│   ├── keybinds.conf          # All 50+ keybindings (single file)
+│   └── windowrules.conf       # Float, opacity, layer rules
+├── quickshell/
+│   ├── shell.qml              # Root: 15+ PanelWindows + GlobalShortcuts
+│   ├── BarContent.qml         # Bar layout (exclusiveZone: 34)
+│   ├── services/              # 9 singleton services
+│   │   ├── ColorService.qml   # Process+cat, Material You colors
+│   │   ├── AudioService.qml   # wpctl, sink switching, mic parsing
+│   │   ├── NotificationService.qml # DBus server, persistence
+│   │   └── ...
+│   ├── widgets/               # 15+ popup widgets
+│   │   ├── WallpaperPicker.qml
+│   │   ├── NotificationPopup.qml
+│   │   ├── ClipboardManager.qml
+│   │   ├── EmojiPicker.qml
+│   │   ├── GifPicker.qml
+│   │   └── ...
+│   └── core/
+│       └── NotificationUtils.js
+├── wlogout/                   # HyprNova-style power menu
+│   ├── layout
+│   ├── style.css              # Material You via matugen template
+│   └── icons/                 # 12 HyprNova icons
+└── scripts/
+    ├── screenshots/screenshot.sh
+    └── recording/recording.sh
+```
+
+## Suggested Screenshots
+
+| Filename | What to Capture |
+|---|---|
+| `trotid-shell-hero.png` | Full desktop with bar, wallpaper, and a notification toast visible |
+| `trotid-shell-bar.png` | Close-up of the bar showing workspaces, clock, volume, battery, WiFi+speed, CPU temp |
+| `trotid-shell-wallpaper-picker.png` | Coverflow wallpaper picker open with filter bar visible |
+| `trotid-shell-notifications.png` | Toast notifications with action buttons visible (send a test with `notify-send -a "test" --action=default="Run Update" "Update Available" "Click to update"`) |
+| `trotid-shell-cheatsheet.png` | Cheatsheet popup with search bar and categorized keybinds |
+| `trotid-shell-clipboard.png` | Clipboard manager with items and search |
+| `trotid-shell-emoji-gif.png` | Emoji picker or GIF picker open (side by side or separate) |
+| `trotid-shell-quick-actions.png` | Quick actions HUD with keyboard highlight |
+| `trotid-shell-osd.png` | Volume/brightness OSD popup |
+| `trotid-shell-dark-theme.png` | Desktop with a dark wallpaper showing the dark Material You theme |
+| `trotid-shell-light-theme.png` | Desktop with a light wallpaper showing color variation |
+
+## Stats
+
+- **15+ widgets** assembled and adapted in QML
+- **9 singleton services** with live property bindings
+- **50+ keybinds** in one file for cheatsheet generation
+- **No external widget libraries** — everything is native Quickshell
+- **30fps wallpaper carousel** with pre-generated thumbnails
+- **Live Material You theming** across all components on wallpaper change
+
+## Credits
+
+- **Bar design** — inspired by Noro18/linux-ricing-dotfiles
+- **Notification panel** — inspired by nandoroid
+- **Coverflow picker** — inspired by ilyamiro's wallpaper carousel
+- **Power menu icons** — HyprNova project
+- **Compositor** — Hyprland
+- **Framework** — Quickshell
+- **Color generation** — matugen

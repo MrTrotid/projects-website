@@ -1,15 +1,15 @@
 # Projects Showcase Website
 
-A modern projects showcase website built with Astro 5, featuring a terminal/command-line aesthetic inspired by [bamanguragain.com.np](https://www.bamanguragain.com.np).
+A modern projects showcase website built with Astro 6, featuring a terminal/command-line aesthetic inspired by [bamanguragain.com.np](https://www.bamanguragain.com.np).
 
 ## 🚀 Tech Stack
 
-- **Framework**: Astro 5 (Static Site Generation)
+- **Framework**: Astro 6 (Static Site Generation)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS 3
 - **Content**: MDX (Markdown with JSX)
 - **Icons**: Lucide Icons
-- **Animations**: Astro View Transitions API
+- **Animations**: Astro Client Router
 
 ## ✨ Features
 
@@ -30,8 +30,8 @@ A modern projects showcase website built with Astro 5, featuring a terminal/comm
 ```
 projects-website/
 ├── src/
+│   ├── content.config.ts      # Content collections schema (Astro 6)
 │   ├── content/
-│   │   ├── config.ts          # Content collections schema
 │   │   └── projects/          # MDX files for each project
 │   │       ├── aq-sentinel.mdx
 │   │       ├── certificates-site.mdx
@@ -40,9 +40,10 @@ projects-website/
 │   │       ├── meroaushadhi.mdx
 │   │       ├── question-paper-extractor.mdx
 │   │       ├── sherlock-scramble.mdx
-│   │       └── sherlock-scramble-solver.mdx
+│   │       ├── sherlock-scramble-solver.mdx
+│   │       └── trotid-shell-project.mdx
 │   ├── layouts/
-│   │   └── Layout.astro       # Main layout with View Transitions
+│   │   └── Layout.astro       # Main layout with Client Router
 │   ├── components/
 │   │   ├── ui/
 │   │   │   ├── Navbar.astro
@@ -176,4 +177,4 @@ MIT
 
 ---
 
-Built with ❤️ using Astro 5
+Built with ❤️ using Astro 6

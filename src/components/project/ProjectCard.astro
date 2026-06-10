@@ -7,7 +7,7 @@ interface Props {
 
 const { project } = Astro.props;
 const { title, description, techStack, image, date } = project.data;
-const { slug } = project;
+const slug = project.id;
 ---
 
 <a href={`/${slug}`} class="group block" transition:name={`project-${slug}`}>
